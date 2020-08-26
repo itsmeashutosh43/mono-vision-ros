@@ -24,19 +24,10 @@ using namespace cv;
 using namespace std;
 
 
-
-std::string getexepath()
-{
-  char result[ PATH_MAX ];
-  ssize_t count = readlink( "/proc/self/exe", result, PATH_MAX );
-  return std::string( result -8 , (count > 1) ? count : 0 );
-}
-
-
 void featureDetection(cv::Mat &img,std::vector<cv::Point2f>& points)
 {
     vector<cv::KeyPoint> key_point1;
-    int fast_threshold = 20;
+    int fast_threshold = 10;
     bool nonMaxSupress = true;
     cv::FAST(img,key_point1,fast_threshold,nonMaxSupress);
 
