@@ -3,7 +3,7 @@
 
 MonoVision::MonoVision():it_(nh_)
 {
-    image_sub = it_.subscribe("/mybot/camera/image_raw", 1 , &MonoVision::imageCb, this);
+    image_sub = it_.subscribe("/mybot/camera/image_rect", 1 , &MonoVision::imageCb, this);
     cv::namedWindow("Image from camera"); 
 }
 
