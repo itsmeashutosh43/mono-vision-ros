@@ -13,9 +13,11 @@ class MonoVision{
     image_geometry::PinholeCameraModel cam_model_;
 
     bool init = true;
+    bool first_transformation = true;
 
     std::vector<cv::Point2f> points1, points2;
     cv::Mat E,R,t,mask;
+    cv::Mat R_f, t_f;
     cv::Mat prev_image , prev_image_c;
     cv::Mat curr_image, curr_image_c;
     cv::Matx33f intrinsic;
