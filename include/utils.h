@@ -11,6 +11,7 @@
 #include <ctype.h>
 #include <algorithm>
 #include <iterator>
+#include <cmath>
 #include <vector>
 #include <ctime>
 #include <sstream>
