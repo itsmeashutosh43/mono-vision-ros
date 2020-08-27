@@ -16,15 +16,13 @@ class MonoVision{
     bool first_transformation = true;
 
     std::vector<cv::Point2f> points1, points2;
+    std::vector<cv::KeyPoint> kp, kp1;
     cv::Mat E,R,t,mask;
     cv::Mat R_f, t_f;
     cv::Mat prev_image , prev_image_c;
-    cv::Mat curr_image, curr_image_c;
+    cv::Mat curr_image, curr_image_c , curr_image_kp;
     cv::Matx33f intrinsic;
-    std::vector<uchar> status;
-
-
-
+    cv::Mat traj = cv::Mat::zeros(600, 600, CV_8UC3);
 
     public:
     MonoVision();

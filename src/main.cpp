@@ -63,9 +63,9 @@ void MonoVision::imageCb(const sensor_msgs::ImageConstPtr& image_msg,const senso
         // Send R with pose_stamped odom message
         float yaw, pitch , roll;
 
-        yaw = std::atan(R.at<double>(1,0)/R.at<double>(0,0));
-        pitch = std::atan(R.at<double>(2,0)/std::sqrt(R.at<double>(2,1) * R.at<double>(2,1) + R.at<double>(2,2) * R.at<double>(2,2)));
-        roll = std::atan(R.at<double>(2,1) / R.at<double>(2,2));
+        yaw = std::atan(R_f.at<double>(1,0)/R_f.at<double>(0,0));
+        pitch = std::atan(R_f.at<double>(2,0)/std::sqrt(R_f.at<double>(2,1) * R_f.at<double>(2,1) + R_f.at<double>(2,2) * R_f.at<double>(2,2)));
+        roll = std::atan(R_f.at<double>(2,1) / R_f.at<double>(2,2));
 
         std::cout<< "Yaw "<<yaw << " pitch "<<pitch<<" Roll "<<roll<<std::endl;
 

@@ -25,14 +25,17 @@ using namespace cv;
 using namespace std;
 
 
-void featureDetection(cv::Mat &img,std::vector<cv::Point2f>& points)
+vector<cv::KeyPoint> featureDetection(cv::Mat &img,std::vector<cv::Point2f>& points)
 {
     vector<cv::KeyPoint> key_point1;
-    int fast_threshold = 10;
+    int fast_threshold = 30;
     bool nonMaxSupress = true;
     cv::FAST(img,key_point1,fast_threshold,nonMaxSupress);
 
     KeyPoint::convert(key_point1, points);
+
+    
+    return key_point1;
 
 }
 
