@@ -67,8 +67,11 @@ void MonoVision::imageCb(const sensor_msgs::ImageConstPtr& image_msg,const senso
     // Send R with pose_stamped odom message
     float dt = now.toSec() - prev.toSec();
     cv::Mat dR = R - R_prev;
-    std::cout<<dt<<std::endl;
     S = (dR / dt) * R.t();
+
+    double x = S.at<float>(2,1);
+    double y = S.at<float>(0,2);
+    double z = S.at<float>(1,0);
 
         
 
