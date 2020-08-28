@@ -11,6 +11,8 @@ class MonoVision{
     image_transport::CameraSubscriber sub_;
     cv_bridge::CvImagePtr cv_ptr;
     image_geometry::PinholeCameraModel cam_model_;
+    ros::Time now; 
+    ros::Time prev;
 
     bool init = true;
     bool first_transformation = true;
@@ -18,7 +20,7 @@ class MonoVision{
     std::vector<cv::Point2f> points1, points2;
     std::vector<cv::KeyPoint> kp, kp1;
     cv::Mat E,R,t,mask;
-    cv::Mat R_f, t_f;
+    cv::Mat R_f, t_f, S, R_prev;
     cv::Mat prev_image , prev_image_c;
     cv::Mat curr_image, curr_image_c , curr_image_kp;
     cv::Matx33f intrinsic;
