@@ -4,6 +4,7 @@ project(mono_vision_ros)
 find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   image_transport
+  nav_msgs
   roscpp
   sensor_msgs
   std_msgs

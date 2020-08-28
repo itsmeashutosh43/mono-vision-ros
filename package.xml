@@ -68,6 +68,10 @@
   <build_depend>image_geometry</build_depend>
   <build_export_depend>image_geometry</build_export_depend>
   <exec_depend>image_geometry</exec_depend>
+
+  <build_depend>nav_msgs</build_depend>
+  <build_export_depend>nav_msgs</build_export_depend>
+  <exec_depend>nav_msgs</exec_depend>
   
 
 

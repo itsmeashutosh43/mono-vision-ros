@@ -3,6 +3,7 @@
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
 #include <image_geometry/pinhole_camera_model.h>
+#include <nav_msgs/Odometry.h>
 
 
 class MonoVision{
@@ -11,8 +12,10 @@ class MonoVision{
     image_transport::CameraSubscriber sub_;
     cv_bridge::CvImagePtr cv_ptr;
     image_geometry::PinholeCameraModel cam_model_;
+    nav_msgs::Odometry msg;
     ros::Time now; 
     ros::Time prev;
+    ros::Publisher odom_pub_;  
 
     bool init = true;
     bool first_transformation = true;

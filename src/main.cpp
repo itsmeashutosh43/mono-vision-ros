@@ -4,8 +4,8 @@
 MonoVision::MonoVision():it_(nh_)
 {
     sub_ = it_.subscribeCamera("/mybot/camera/image_rect", 1 , &MonoVision::imageCb, this);
+    odom_pub_ = nh_.advertise<nav_msgs::Odometry>("cam_odom", 1000);
     cv::namedWindow("Image from camera"); 
-
 }
 
 MonoVision::~MonoVision()
@@ -68,10 +68,21 @@ void MonoVision::imageCb(const sensor_msgs::ImageConstPtr& image_msg,const senso
     float dt = now.toSec() - prev.toSec();
     cv::Mat dR = R - R_prev;
     S = (dR / dt) * R.t();
+    std::cout<<S<<std::endl;
 
     double x = S.at<float>(2,1);
     double y = S.at<float>(0,2);
     double z = S.at<float>(1,0);
+
+    nav_msgs::Odometry data;
+    data.child_frame_id = "camera";
+
+    data.twist.twist.angular.x = x;
+    data.twist.twist.angular.y = y;
+    data.twist.twist.angular.z = z;
+
+    odom_pub_.publish(data);
+
 
         
 
