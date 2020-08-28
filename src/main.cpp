@@ -5,7 +5,6 @@ MonoVision::MonoVision():it_(nh_)
 {
     sub_ = it_.subscribeCamera("/mybot/camera/image_rect", 1 , &MonoVision::imageCb, this);
     cv::namedWindow("Image from camera"); 
-    cv::namedWindow( "Trajectory", WINDOW_AUTOSIZE );// Create a window for display.
 
 }
 
@@ -47,9 +46,7 @@ void MonoVision::imageCb(const sensor_msgs::ImageConstPtr& image_msg,const senso
 
     cv::KeyPoint::convert(points2 , kp1);
 
-    
     E = cv::findEssentialMat(points2, points1, intrinsic, RANSAC, 0.99, 2.0 ,mask);
-    std::cout<<mask<<std::endl;
 
     cv::recoverPose(E, points2 , points1 , intrinsic, R, t, mask);
     now = ros::Time::now();
@@ -65,35 +62,15 @@ void MonoVision::imageCb(const sensor_msgs::ImageConstPtr& image_msg,const senso
     }
 
     
-        t_f = t_f + 1 * (R_f * t);
-        R_f = R * R_f;
+        
+    // R is instanaeous change in orientation
+    // Send R with pose_stamped odom message
+    float dt = now.toSec() - prev.toSec();
+    cv::Mat dR = R - R_prev;
+    std::cout<<dt<<std::endl;
+    S = (dR / dt) * R.t();
 
-        // R is instanaeous change in orientation
-        // Send R with pose_stamped odom message
-        float dt = now.toSec() - prev.toSec();
-        cv::Mat dR = R - R_prev;
-        std::cout<<dt<<std::endl;
-        S = (dR / dt) * R.t();
-
-        std::cout<<"*****************************"<<std::endl;
-        std::cout<<R<<std::endl;
-
-        std::cout<<R_prev<<std::endl;
-
-        std::cout<<S<<std::endl;
-        std::cout<<"*****************************"<<std::endl;
-
-
-        //float yaw, pitch , roll;
-
-        //yaw = std::atan(R.at<double>(1,0)/R.at<double>(0,0));
-        //pitch = std::atan(R.at<double>(2,0)/std::sqrt(R.at<double>(2,1) * R.at<double>(2,1) + R.at<double>(2,2) * R.at<double>(2,2)));
-        //roll = std::atan(R.at<double>(2,1) / R.at<double>(2,2));
-
-        //std::cout<< "Yaw "<<yaw << " pitch "<<pitch<<" Roll "<<roll<<std::endl;
-
-    
-
+        
 
     std::cout<<points1.size()<<std::endl;
 
@@ -107,12 +84,7 @@ void MonoVision::imageCb(const sensor_msgs::ImageConstPtr& image_msg,const senso
     cv::drawKeypoints(curr_image_c, kp1, curr_image_kp);
 
     
-    int x = int(t_f.at<double>(0)) + 300;
-    int y = int(t_f.at<double>(1)) + 100;
-    cv::circle(traj, cv::Point(x, y) ,1, CV_RGB(255,0,0), 2);
     
-    cv::imshow("Trajectory",traj);
-
     cv::imshow("Image from camera", curr_image_kp);
     cv::waitKey(3);
     prev_image_c = curr_image_c.clone();
