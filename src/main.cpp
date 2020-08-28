@@ -97,6 +97,7 @@ void MonoVision::imageCb(const sensor_msgs::ImageConstPtr& image_msg,const senso
 
     cv::drawKeypoints(curr_image_c, kp1, curr_image_kp);
 
+
     
     
     cv::imshow("Image from camera", curr_image_kp);

@@ -28,7 +28,7 @@ using namespace std;
 vector<cv::KeyPoint> featureDetection(cv::Mat &img,std::vector<cv::Point2f>& points)
 {
     vector<cv::KeyPoint> key_point1;
-    int fast_threshold = 40;
+    int fast_threshold = 20;
     bool nonMaxSupress = true;
     cv::FAST(img,key_point1,fast_threshold,nonMaxSupress);
 
@@ -47,7 +47,7 @@ void featureTracking(cv::Mat& img1, cv::Mat& img2,std::vector<cv::Point2f>& poin
 
     cv::TermCriteria termCrit = cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS,30,0.1);
 
-    cv::calcOpticalFlowPyrLK(img1,img2,points1,points2,status,err,winSize,3,termCrit,0,0.001);
+    cv::calcOpticalFlowPyrLK(img1,img2,points1,points2,status,err,winSize,1,termCrit,0,0.001);
 
 
     int indexCorrection = 0;
