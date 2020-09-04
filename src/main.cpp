@@ -3,7 +3,7 @@
 
 MonoVision::MonoVision():it_(nh_)
 {
-    sub_ = it_.subscribeCamera("/mybot/camera/image_rect", 1 , &MonoVision::imageCb, this);
+    sub_ = it_.subscribeCamera("/camera/rgb/image_rect", 1 , &MonoVision::imageCb, this);
     odom_pub_ = nh_.advertise<nav_msgs::Odometry>("cam_odom", 1000);
     cv::namedWindow("Image from camera"); 
 }
