@@ -45,14 +45,34 @@ void MonoVision::imageCb(const sensor_msgs::ImageConstPtr& image_msg,const senso
     featureTracking(prev_image, curr_image ,points1, points2, status);
 
     cv::KeyPoint::convert(points2 , kp1);
+    preprocess_points(points1, pre_points1,transformation1);
+    assert(points1.size() == pre_points1.size());
 
-    E = cv::findEssentialMat(points2, points1, intrinsic, RANSAC, 0.99, 2.0 ,mask);
+    preprocess_points(points2, pre_points2,transformation2);
+    assert(points2.size() == pre_points2.size());
+
+    E = cv::findEssentialMat(pre_points2, pre_points1, intrinsic, RANSAC, 0.99999, 2.0 ,mask);
+
+    cv::Mat w, u, vt;
+    SVD::compute(E, w, u, vt);
+
+    cv::Mat d = (Mat_<double>(3,3) << 1, 0, 0, 0, 1, 0, 0, 0, 0); 
+
+    
+    E = u * d * vt;
+    
+    transformation1.convertTo(transformation1,CV_64F);
+    transformation2.convertTo(transformation2,CV_64F);
+
+    E = transformation1.t() * E * transformation2;
+
 
     cv::recoverPose(E, points2 , points1 , intrinsic, R, t, mask);
     now = ros::Time::now();
 
     if(first_transformation)
     {
+
         first_transformation = false;
         R_f = R.clone();
         t_f = t.clone();
@@ -65,10 +85,11 @@ void MonoVision::imageCb(const sensor_msgs::ImageConstPtr& image_msg,const senso
         
     // R is instanaeous change in orientation
     // Send R with pose_stamped odom message
+    std::cout<<R<<std::endl;
     float dt = now.toSec() - prev.toSec();
     cv::Mat dR = R - R_prev;
     S = (dR / dt) * R.t();
-    std::cout<<S<<std::endl;
+    //std::cout<<S<<std::endl;
 
     double x = S.at<float>(2,1);
     double y = S.at<float>(0,2);
@@ -82,6 +103,7 @@ void MonoVision::imageCb(const sensor_msgs::ImageConstPtr& image_msg,const senso
     data.twist.twist.angular.z = z;
 
     odom_pub_.publish(data);
+
 
 
         
