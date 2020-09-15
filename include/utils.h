@@ -94,6 +94,82 @@ std::string type2str(int type) {
 }
 
 
+bool calcErr(cv::Mat& E,std::vector<cv::Point2f>& points1,std::vector<cv::Point2f>& points2)
+{
+    cv::Mat hpoints1(cv::Size(points1.size(), 3), CV_32FC1);; 
+    cv::convertPointsToHomogeneous(points1,hpoints1);
+    hpoints1 = hpoints1.reshape(1,points1.size());
+    hpoints1.convertTo(hpoints1,CV_64F);
+
+
+    cv::Mat hpoints2(cv::Size(points2.size(), 3), CV_32FC1);; 
+    cv::convertPointsToHomogeneous(points2,hpoints2);
+    hpoints2.convertTo(hpoints2,CV_64F);
+    hpoints2 = hpoints2.reshape(1,points2.size());
+
+    // image 2 is considered as first image and image1 is considered as second image
+    // For instance,`′ the epipolar line in the image of camera 2
+    
+    
+    cv::Mat lines = E * hpoints2.t();
+
+
+    double err,x,y,z = 0;
+    int width = lines.size().width;
+
+    int indexCorrection = 0;
+
+    for (int i=0 ; i< width ; i++)
+    {
+        
+        //std::cout<<"*******"<<std::endl;
+        //std::cout<<" "<< lines.at<double>(0,i)<<" "<< lines.at<double>(1,i)<<" "<< lines.at<double>(2,i)<<std::endl;
+        //std::cout<<" "<<x<<" "<<y<<" "<<z<<std::endl;
+
+        
+        
+        double errI = lines.at<double>(0,i) * (points1.at(i).x) + lines.at<double>(1,i) * (points1.at(i).y) + lines.at<double>(2,i);
+        if (errI > 0.01)
+        {
+            //points1.erase(points1.begin() + i - indexCorrection);
+            //points2.erase(points2.begin() + i - indexCorrection);
+            //indexCorrection++;
+
+        }
+        //std::cout<<x<<","<<(points1.at(i).x)<<" "<<y<<","<<(points1.at(i).y)<<" "<<z<<std::endl;
+        //std::cout<<errI<<std::endl;
+        err += std::fabs(errI);
+
+        
+    }
+    if((err/width) < 0.6)
+    {
+        return true;
+    }
+    return false;
+
+    
+}
+
+bool nearlyEquals(double x)
+{
+    double err = std::abs(x - 1);
+
+    if (err < 0.5) return true;
+    return false;
+}
+
+void cleanRotation(cv::Mat& R)
+{
+    R.at<double>(2,2) = 1;
+    R.at<double>(0,2) = 0;
+    R.at<double>(1,2) = 0;
+    R.at<double>(2,0) = 0;
+    R.at<double>(2,1) = 0;
+
+}
+
+
 
 void preprocess_points(std::vector<cv::Point2f> &points, std::vector<cv::Point2f> &prepoints, cv::Mat& transformation)
 {
