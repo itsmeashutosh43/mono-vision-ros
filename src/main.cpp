@@ -66,8 +66,22 @@ void MonoVision::imageCb(const sensor_msgs::ImageConstPtr& image_msg,const senso
 
     E = transformation1.t() * E * transformation2;
 
+    if (!calcErr(E, points1, points2))
+    {
+        return;
+    }
+
 
     cv::recoverPose(E, points2 , points1 , intrinsic, R, t, mask);
+
+    // Since the robot cannot move about the z axis, R(2,2) of the rotation matrix R should be 1
+    if (!nearlyEquals(R.at<double>(2,2)))
+    {
+        return;
+    }
+
+    cleanRotation(R);
+
     now = ros::Time::now();
 
     if(first_transformation)
@@ -81,25 +95,26 @@ void MonoVision::imageCb(const sensor_msgs::ImageConstPtr& image_msg,const senso
         return;
     }
 
+    cv::Mat fundamentalMatrix = (cv::Mat)cv::findFundamentalMat(points1, points2);
+    
     
         
     // R is instanaeous change in orientation
     // Send R with pose_stamped odom message
-    std::cout<<R<<std::endl;
+    //std::cout<<E<<std::endl;
+    //std::cout<<R*R.t()<<std::endl;
     float dt = now.toSec() - prev.toSec();
     cv::Mat dR = R - R_prev;
     S = (dR / dt) * R.t();
-    //std::cout<<S<<std::endl;
+    std::cout<<S<<std::endl;
 
-    double x = S.at<float>(2,1);
-    double y = S.at<float>(0,2);
     double z = S.at<float>(1,0);
 
     nav_msgs::Odometry data;
     data.child_frame_id = "camera";
 
-    data.twist.twist.angular.x = x;
-    data.twist.twist.angular.y = y;
+    data.twist.twist.angular.x = 0;
+    data.twist.twist.angular.y = 0;
     data.twist.twist.angular.z = z;
 
     odom_pub_.publish(data);
