@@ -33,6 +33,8 @@ void MonoVision::imageCb(const sensor_msgs::ImageConstPtr& image_msg,const senso
         init = false;
         cam_model_.fromCameraInfo(info_msg);
         intrinsic = cam_model_.fullIntrinsicMatrix();
+        distortionCoeffs = cam_model_.distortionCoeffs();
+        std::cout<<"Distortion_coeffs is "<<distortionCoeffs<<std::endl;
         std::cout<<intrinsic<<std::endl;
         kp = featureDetection(curr_image, points1);
         prev_image_c = curr_image_c.clone();
@@ -51,8 +53,8 @@ void MonoVision::imageCb(const sensor_msgs::ImageConstPtr& image_msg,const senso
     preprocess_points(points2, pre_points2,transformation2);
     assert(points2.size() == pre_points2.size());
 
-    E = cv::findEssentialMat(pre_points2, pre_points1, intrinsic, RANSAC, 0.99999, 2.0 ,mask);
-
+    E = cv::findEssentialMat(pre_points2, pre_points1, intrinsic, RANSAC, 0.99999, 1 ,mask);
+    
     cv::Mat w, u, vt;
     SVD::compute(E, w, u, vt);
 
@@ -94,11 +96,7 @@ void MonoVision::imageCb(const sensor_msgs::ImageConstPtr& image_msg,const senso
         prev = now;
         return;
     }
-
-    cv::Mat fundamentalMatrix = (cv::Mat)cv::findFundamentalMat(points1, points2);
-    
-    
-        
+  
     // R is instanaeous change in orientation
     // Send R with pose_stamped odom message
     //std::cout<<E<<std::endl;
@@ -106,11 +104,14 @@ void MonoVision::imageCb(const sensor_msgs::ImageConstPtr& image_msg,const senso
     float dt = now.toSec() - prev.toSec();
     cv::Mat dR = R - R_prev;
     S = (dR / dt) * R.t();
+
     std::cout<<S<<std::endl;
 
-    double z = S.at<float>(1,0);
+
+    double z = S.at<double>(1,0);
 
     nav_msgs::Odometry data;
+    data.header.stamp = ros::Time::now();
     data.child_frame_id = "camera";
 
     data.twist.twist.angular.x = 0;
