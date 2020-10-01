@@ -8,10 +8,15 @@ This is a fully robocentric representation of the filter state where we avoid ma
 ## How to Run
 `
 cd /in/your/workspace/src
+
 git clone https://github.com/itsmeashutosh43/mono-vision-ros.git
+
 cd ..
+
 catkin_make
+
 roslaunch mono_vision_ros mybot.launch
+
 rosrun mono_vision_ros mono_vision # in another terminal
 
 `
