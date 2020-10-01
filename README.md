@@ -8,15 +8,10 @@ This is a fully robocentric representation of the filter state where we avoid ma
 ## How to Run
 ```
 cd /in/your/workspace/src
-
 git clone https://github.com/itsmeashutosh43/mono-vision-ros.git
-
 cd ..
-
 catkin_make
-
 roslaunch mono_vision_ros mybot.launch
-
 rosrun mono_vision_ros mono_vision # in another terminal
 
 ```
@@ -24,6 +19,13 @@ rosrun mono_vision_ros mono_vision # in another terminal
 ## Publications: 
 
 * /cam_odom [nav_msgs/Odometry]
+
+
+## References
+
+Mono Vision implementation on KITTI dataset https://github.com/avisingh599/mono-vo
+
+Tutorial on Visual Odometry - by Davide Scaramuzza (http://rpg.ifi.uzh.ch/visual_odometry_tutorial.html)
 
 
 
