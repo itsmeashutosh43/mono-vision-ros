@@ -52,6 +52,17 @@ rosrun mono_vision_ros mono_vision # in another terminal
 
 * /cam_odom [nav_msgs/Odometry]
 
+## Limitations
+
+1) For consistent estimation, visual odometry needs to have over 1000-1500 features per frame. However, in this simulation the camera can only capture around 100 features per frame. 
+
+2) Bad Estimations of rotation matrix are filtered out therefore it cannot be used to integrate over time to get pose estimation. 
+
+3) I've used this method in a real-robot where it worked well in conjuction with other open source softwares in a rich environment. However I cannot share that code, therefore I've developed this project as a small replication of it. **This code repo is not ready to be used in real-world applications.** 
+
+
+
+
 
 ## References
 
