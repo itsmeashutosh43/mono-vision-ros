@@ -30,4 +30,6 @@ include_directories(
 add_executable(mono_vision src/main.cpp)
 target_link_libraries(mono_vision ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
+add_executable(mono_vision_test src/test.cpp)
+target_link_libraries(mono_vision_test ${catkin_LIBRARIES} )
 
