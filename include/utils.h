@@ -142,14 +142,84 @@ bool calcErr(cv::Mat& E,std::vector<cv::Point2f>& points1,std::vector<cv::Point2
 
         
     }
+    std::cout << "Per pixel epipolar projection Error is "<< err/width << std::endl;
     if((err/width) < 0.6)
     {
         return true;
     }
-    return false;
+    return false;    
+}
 
+bool calFundamentalMatErr(cv::Mat& F,std::vector<cv::Point2f>& points1,std::vector<cv::Point2f>& points2)
+{
+    cv::Mat hpoints1;
+    cv::convertPointsToHomogeneous(points1,hpoints1);
+    hpoints1 = hpoints1.reshape(1, points1.size());
+    
+
+    cv::Mat hpoints2; 
+    cv::convertPointsToHomogeneous(points2,hpoints2);
+    hpoints2 = hpoints2.reshape(1, points2.size());
+    
+    // image 2 is considered as first image and image1 is considered as second image
+    // For instance,`′ the epipolar line in the image of camera 2
+
+
+    //cv::Mat err = hpoints2.t() * F * hpoints1;
+
+    int height = hpoints1.size().height;
+
+    int width = hpoints1.size().width;
+
+
+    double errI= 0;
+
+
+
+    float x0,y0,x1,y1,x2,y2;
+    for (int i=0 ; i< height ; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            if (j == 0)
+            {
+                x0 = hpoints1.at<float>(i,j);
+                y0 = hpoints2.at<float>(i,j);
+            }
+            if (j==1)
+            {
+                x1 = hpoints1.at<float>(i,j);
+                y1 = hpoints2.at<float>(i,j);
+            }
+            if (j ==2)
+            {
+                x2 = hpoints1.at<float>(i,j);
+                y2 = hpoints2.at<float>(i,j);
+            }
+            
+        }
+        cv::Mat xMat = (cv::Mat_<double>(3,1) << x0, x1 ,x2);
+        cv::Mat yMat = (cv::Mat_<double>(3,1) << y0, y1 ,y2);
+
+        
+        cv::Mat err = yMat.t() * F * xMat ;
+
+
+
+        errI += std::fabs(err.at<double>(0));
+            
+    }
+
+
+    std::cout<<"Fundamental mat error "<<errI/height<<std::endl;
+
+
+    if (errI/height > 2) return false;
+
+    return true;
     
 }
+
 
 bool nearlyEquals(double x)
 {

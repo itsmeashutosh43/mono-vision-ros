@@ -24,11 +24,12 @@ class MonoVision{
     cv::Mat transformation1;
     cv::Mat transformation2;
     std::vector<cv::KeyPoint> kp, kp1;
-    cv::Mat E,R,t,mask;
+    cv::Mat E,R,t,mask,F;
     cv::Mat R_f, t_f, S, R_prev;
     cv::Mat prev_image , prev_image_c;
+    cv::Mat distortionCoeffs;
     cv::Mat curr_image, curr_image_c , curr_image_kp;
-    cv::Matx33f intrinsic;
+    cv::Matx33d intrinsic;
     cv::Mat traj = cv::Mat::zeros(600, 600, CV_8UC3);
 
     public:
